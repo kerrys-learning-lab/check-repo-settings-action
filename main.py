@@ -173,7 +173,14 @@ if __name__ == "__main__":
     owner_name, _, repo_name = os.environ["GITHUB_REPOSITORY"].partition("/")
 
     logger.info(f"Checking repository: {repo_name} ({owner_name})")
-    logger.error(f"Using key: {os.environ['INPUT_GITHUB_TOKEN']}")
+
+    if not os.environ["INPUT_GITHUB_TOKEN"]:
+        logger.error(f"INPUT_GITHUB_TOKEN is empty!")
+        logger.error(
+            f"Verify that this repository is able to access organization secrets."
+        )
+        logger.error(f"(Start by ensuring that this repository is public)")
+        sys.exit(-1)
 
     client = ghapi.all.GhApi(
         owner=owner_name,

@@ -1,0 +1,17 @@
+# NOTE: This file is only necessary if overriding the organization defaults
+repo:
+  default_branch: main
+
+protection:
+  branches:
+    main:
+      required_status_checks:
+        strict: false
+        contexts: []
+      required_pull_request_reviews:
+        dismiss_stale_reviews: false
+        require_code_owner_reviews: false
+        required_approving_review_count: 0
+
+  tags:
+    - v*

@@ -228,8 +228,11 @@ if __name__ == "__main__":
             )
         except SettingsMismatchError as ex:
             errors = errors | ex.mismatches
-        except ex:
-            errors[branch_name] = {"current": "Unprotected", "desired": "Protected"}
+        except Exception:
+            errors[f"branch.{{{branch_name}}}.protection"] = {
+                "current": "Unprotected",
+                "desired": "Protected",
+            }
 
     repo_tag_protections = client.repos.list_tag_protection()
     repo_tag_protections = [val["pattern"] for val in repo_tag_protections]

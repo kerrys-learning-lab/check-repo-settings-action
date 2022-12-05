@@ -252,4 +252,8 @@ if __name__ == "__main__":
                 f"     {k} should be {errors[k]['desired']} (currently {errors[k]['current']})"
             )
 
-    sys.exit(0 if "INPUT_IGNORE_FAILURES" in os.environ else len(errors))
+    sys.exit(
+        0
+        if os.environ.get("INPUT_IGNORE_FAILURES", "false").lower() == "true"
+        else len(errors)
+    )

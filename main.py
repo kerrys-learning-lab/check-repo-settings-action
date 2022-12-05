@@ -172,6 +172,9 @@ if __name__ == "__main__":
 
     owner_name, _, repo_name = os.environ["GITHUB_REPOSITORY"].partition("/")
 
+    logger.info(f"Checking repository: {repo_name} ({owner_name})")
+    logger.error(f"Using key: {os.environ['INPUT_GITHUB_TOKEN']}")
+
     client = ghapi.all.GhApi(
         owner=owner_name,
         repo=repo_name,

@@ -6,7 +6,10 @@
     Looks for desired configuration settings in the repository root
     (${GITHUB_WORKSPACE}/.repository-settings.yaml) and in the action's
     defaults (${CONFIGDIR}/default-repository-settings.yaml, where CONFIGDIR
-    defaults to /etc/repository-settings)."""
+    defaults to /etc/repository-settings).
+    
+    The repository owner and name are taken from GITHUB_REPOSITORY.  The token
+    is taken from INPUT_GITHUB_TOKEN."""
 import argparse
 import logging
 import os

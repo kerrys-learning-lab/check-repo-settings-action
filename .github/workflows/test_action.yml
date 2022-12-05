@@ -16,4 +16,4 @@ jobs:
       - name: test action
         uses: ./
         with:
-          github_token: "${{ secrets.GITHUB_TOKEN }}"
+          github_token: "${{ secrets.KERRYS_LEARNING_LAB_TOKEN }}"

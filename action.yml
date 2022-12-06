@@ -1,0 +1,12 @@
+name: Check repository settings
+description: Check/enforce repository settings based on a YAML configuration
+runs:
+  using: docker
+  image: Dockerfile
+inputs:
+  ignore_failures:
+    description: "Report failures but always return successful exit code"
+    required: false
+  github_token:
+    description: 'Token for the repo. Can be passed in using $\{{ secrets.GITHUB_TOKEN }}'
+    required: true

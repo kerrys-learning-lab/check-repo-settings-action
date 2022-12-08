@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "check-repo-settings-action"
+version = "1.0.1"
+description = "Check/validate repository settings"
+authors = ["Kerry Johnson <kerry.t.johnson@gmail.com>"]
+readme = "README.md"
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "v$version"
+version = "1.0.1"
+version_files = [
+    "pyproject.toml:^version"
+]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+PyYAML = "^6.0"
+requests = "^2.28.1"
+rich = "^12.6.0"
+
+[tool.poetry.group.dev.dependencies]
+commitizen = "^2.35.0"
+pylint = "^2.15.3"
+black = "^22.8.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

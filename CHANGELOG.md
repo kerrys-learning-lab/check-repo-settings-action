@@ -3,11 +3,3 @@
 ### Fix
 
 - Initial development
-- Initial development
-- Initial development
-- Initial development
-- Initial development
-- Initial development
-- Initial development
-- Initial development
-- Initial development

@@ -12,12 +12,11 @@ ENV CONFIGDIR=/etc/repository-settings
 WORKDIR ${WORKDIR}
 COPY * ${WORKDIR}/
 
-# RUN pip install ghapi  \
-#                 PyYaml
+RUN /opt/poetry/bin/poetry install --only=main
 
 RUN mkdir -p ${CONFIGDIR}; \
     for file in ${WORKDIR}/*.yaml; do \
       ln -sf ${file} ${CONFIGDIR}/$(basename ${file}); \
     done
 
-ENTRYPOINT ["python3", "/opt/repository-settings/main.py"]
+ENTRYPOINT ["/opt/poetry/bin/poetry", "run", "/opt/repository-settings/main.py"]

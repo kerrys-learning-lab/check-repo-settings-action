@@ -1,4 +1,4 @@
-FROM python:3.9
+FROM python:3.11
 
 RUN export POETRY_HOME=/opt/poetry && \
     export POETRY_VERSION=1.2.2 && \

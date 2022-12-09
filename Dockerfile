@@ -8,6 +8,8 @@ RUN export POETRY_HOME=/opt/poetry && \
 
 ENV WORKDIR=/opt/repository-settings
 ENV CONFIGDIR=/etc/repository-settings
+ENV POETRY_VIRTUALENVS_IN_PROJECT=true
+ENV POETRY_VIRTUALENVS_PATH=${WORKDIR}/.venv
 
 WORKDIR ${WORKDIR}
 COPY * ${WORKDIR}/

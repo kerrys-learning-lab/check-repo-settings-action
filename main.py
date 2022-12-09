@@ -183,7 +183,7 @@ class ResultsTable:
     ):
         """Adds the result of a single test assertion."""
         color = ResultsTable.RESULTS_COLOR[result_type]
-        self.table.add_row(test_name, f"[{color}]{result_type}[/{color}]")
+        self.table.add_row(test_name, f"[{color}]{result_type.name}[/{color}]")
         self.results[result_type] = self.results[result_type] + 1
         if result_type == ResultType.FAILED or result_type == ResultType.ERROR:
             for k in sorted(mismatches.keys()):

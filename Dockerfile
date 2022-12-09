@@ -8,8 +8,7 @@ RUN export POETRY_HOME=/opt/poetry && \
 
 ENV WORKDIR=/opt/repository-settings
 ENV CONFIGDIR=/etc/repository-settings
-ENV POETRY_VIRTUALENVS_IN_PROJECT=true
-ENV POETRY_VIRTUALENVS_PATH=${WORKDIR}/.venv
+ENV POETRY_VIRTUALENVS_CREATE=false
 
 WORKDIR ${WORKDIR}
 COPY * ${WORKDIR}/
@@ -21,4 +20,4 @@ RUN mkdir -p ${CONFIGDIR}; \
       ln -sf ${file} ${CONFIGDIR}/$(basename ${file}); \
     done
 
-ENTRYPOINT ["/opt/poetry/bin/poetry", "run", "/opt/repository-settings/main.py"]
+ENTRYPOINT ["/opt/repository-settings/main.py"]

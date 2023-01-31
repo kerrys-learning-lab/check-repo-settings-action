@@ -1,9 +1,9 @@
-FROM python:3.12
+FROM python:3.11
 
 RUN export POETRY_HOME=/opt/poetry && \
-    export POETRY_VERSION=1.2.2 && \
+    export POETRY_VERSION=1.3.0 && \
     curl -sSL https://install.python-poetry.org | python3 - && \
-    echo "export PATH=/opt/poetry/bin:$PATH" > /etc/profile.d/poetry.sh && \
+    install -o root -g root -m 555 /opt/poetry/bin/poetry /usr/local/bin/poetry && \
     /opt/poetry/bin/poetry completions bash >> /etc/profile.d/poetry.sh
 
 ENV WORKDIR=/opt/repository-settings

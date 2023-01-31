@@ -1,3 +1,10 @@
+## v1.1.3 (2023-01-31)
+
+### Fix
+
+- Update dependencies
+- Update dependencies
+
 ## v1.1.2 (2023-01-31)
 
 ### Fix

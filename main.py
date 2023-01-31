@@ -38,13 +38,21 @@ def compare_values(value, reference_value, name=[]):
     name = name if isinstance(name, list) else [name]
     result = {}
     if isinstance(reference_value, dict):
-        for key, val in reference_value.items():
-            result = result | compare_values(value[key], val, [*name, key])
+        try:
+            for key, val in reference_value.items():
+                result = result | compare_values(value[key], val, [*name, key])
+        except Exception as ex:
+            logger.error(f"Unable to compare values for '{'.'.join(name)}': {ex}")
+            result[".".join(name)] = {"current": "UNKNOWN", "desired": reference_value}
     elif isinstance(reference_value, list):
-        # This approach performs a deep comparison of every element of the
-        # array.  To simply check presence in the array, use assert_in_array.
-        for index, val in enumerate(reference_value):
-            result = result | compare_values(value[index], val, [*name, str(index)])
+        try:
+            # This approach performs a deep comparison of every element of the
+            # array.  To simply check presence in the array, use assert_in_array.
+            for index, val in enumerate(reference_value):
+                result = result | compare_values(value[index], val, [*name, str(index)])
+        except Exception as ex:
+            logger.error(f"Unable to compare list values: {ex}")
+            result[".".join(name)] = {"current": "UNKNOWN", "desired": ",".join(reference_value)}
     elif reference_value != value:
         result[".".join(name)] = {"current": value, "desired": reference_value}
     return result

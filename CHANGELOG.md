@@ -1,3 +1,9 @@
+## v1.1.1 (2023-01-31)
+
+### Fix
+
+- Enable verbose logging
+
 ## v1.1.0 (2022-12-09)
 
 ### Feat

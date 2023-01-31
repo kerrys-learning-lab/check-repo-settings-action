@@ -21,3 +21,4 @@ RUN mkdir -p ${CONFIGDIR}; \
     done
 
 ENTRYPOINT ["/opt/repository-settings/main.py"]
+CMD ["--verbose"]

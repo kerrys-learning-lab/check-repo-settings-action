@@ -17,7 +17,7 @@ version_files = [
 python = "^3.11"
 PyYAML = "^6.0"
 requests = "^2.28.2"
-rich = "^13.3.1"
+rich = "^13.3.5"
 
 [tool.poetry.group.dev.dependencies]
 commitizen = "^2.40.0"

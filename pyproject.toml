@@ -16,7 +16,7 @@ version_files = [
 [tool.poetry.dependencies]
 python = "^3.11"
 PyYAML = "^6.0"
-requests = "^2.28.2"
+requests = "^2.29.0"
 rich = "^13.3.1"
 
 [tool.poetry.group.dev.dependencies]

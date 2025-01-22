@@ -8,7 +8,6 @@ defaults:
       json:
         visibility: public
         default_branch: main
-        allow_update_branch: true
         license:
           key: gpl-3.0
 
@@ -42,13 +41,29 @@ defaults:
           require_code_owner_reviews: false
           required_approving_review_count: 0
 
-    Ensure tag patterns are protected:
-      path: repos/{owner}/{repo}/tags/protection
-      array:
-        - v*
-      key: pattern
+    Ensure 'CM tag protections' ruleset:
+      prerequisites:
+        - name: Get 'CM tag protections' ruleset
+          path: repos/{owner}/{repo}/rulesets
+          match:
+            key: name
+            value: CM tag protections
+          substitute:
+            key: cm_tag_protections
+            value: id
+      path: repos/{owner}/{repo}/rulesets/<cm_tag_protections>
+      json:
+        enforcement: active
+        conditions:
+          ref_name:
+            include:
+              - refs/tags/v*
+        rules:
+          - type: creation
+          - type: update
+          - type: deletion
       hints:
-        - Settings >> Tags
+        - Settings >> Rules >> Rulesets
 
     Ensure Dependabot alerts are enabled:
       path: repos/{owner}/{repo}/dependabot/alerts

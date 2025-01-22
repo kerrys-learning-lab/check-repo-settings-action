@@ -13,6 +13,14 @@ user@host:~ $ docker run --rm \
                          -e GITHUB_REPOSITORY=kerrys-learning-lab/<repo-name> \
                          -e INPUT_GITHUB_TOKEN=<token> \
                          local/check-repo-settings-action:test
+# - or, to test with "live" code -
+user@host:~ $ docker run --rm \
+                         -it \
+                         -e GITHUB_REPOSITORY=kerrys-learning-lab/<repo-name> \
+                         -e INPUT_GITHUB_TOKEN=<token> \
+                         -v ./default-repository-settings.yaml:/etc/repository-settings/default-repository-settings.yaml \
+                         -v ./main.py:/opt/repository-settings/main.py \
+                         local/check-repo-settings-action:test
 2023-01-31 18:01:47 DEBUG    Using settings from /etc/repository-settings/default-repository-settings.yaml      main.py:126
                     INFO     Checking repository:  (carbernetes)                                                main.py:233
                     DEBUG    Querying https://api.github.com/repos/carbernetes/                                 main.py:256

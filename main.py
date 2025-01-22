@@ -6,7 +6,7 @@
     (${GITHUB_WORKSPACE}/.repository-settings.yaml) and in the action's
     defaults (${CONFIGDIR}/default-repository-settings.yaml, where CONFIGDIR
     defaults to /etc/repository-settings).
-    
+
     The repository owner and name are taken from GITHUB_REPOSITORY.  The token
     is taken from INPUT_GITHUB_TOKEN."""
 import argparse
@@ -31,6 +31,8 @@ DEFAULT_SETTINGS_FILE_PATH = os.path.join(
 )
 SUBSTITUTION_REGEX = re.compile("<(?P<key>.*)>")
 
+class MatchError(RuntimeError):
+    ''' Occurs when a match cannot be made against the value(s) returned from the API '''
 
 def compare_values(value, reference_value, name=[]):
     """Recursively compares value to reference_value, returning a dictionary
@@ -89,7 +91,7 @@ def substitute(value, substitutions: dict) -> dict:
             except TypeError:
                 pass
 
-        raise RuntimeError(f"Unable to find substitution for {substitution_value}")
+        logger.warning(f"Unable to find substitution for {substitution_value}")
 
     if isinstance(value, dict):
         result = {}
@@ -104,7 +106,10 @@ def substitute(value, substitutions: dict) -> dict:
             match = SUBSTITUTION_REGEX.search(value)
             if match:
                 sub = _lookup_substitution_value(match.group("key"), substitutions)
-                value = value[: match.start()] + sub + value[match.end() :]
+                if sub:
+                    value = value[: match.start()] + str(sub) + value[match.end() :]
+                else:
+                    break
             else:
                 break
         return value
@@ -209,6 +214,26 @@ class ResultsTable:
         console = rich.console.Console()
         console.print(self.table)
 
+def get_json(spec, project_settings):
+    resource    = spec['path'].format(owner=owner_name, repo=repo_name)
+    resource    = "https://api.github.com/" + resource
+    logger.debug(f"Querying {resource}")
+    result = requests.get(
+        resource,
+        headers={"Authorization": f"Bearer {github_token}"},
+    )
+    result.raise_for_status()
+    result = result.json()
+    match = spec.get('match')
+    if match and isinstance(result, list):
+        expected_key = match['key']
+        expected_value = match['value']
+        for r in result:
+            if expected_key in r and r[expected_key] == expected_value:
+                return r
+        raise MatchError(f'Unable to find match for {expected_key}={expected_value}')
+
+    return result
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Verify repository settings.")
@@ -248,6 +273,10 @@ if __name__ == "__main__":
         logger.error(f"(Start by ensuring that this repository is public)")
         sys.exit(-1)
 
+    project_settings['owner']   = owner_name
+    project_settings['repo']    = repo_name
+    project_settings['token']   = github_token
+
     output = ResultsTable()
     for test_name, test_spec in rich.progress.track(
         project_settings.get("tests", {}).items(),
@@ -259,21 +288,23 @@ if __name__ == "__main__":
             output.add_results(test_name, test_spec, ResultType.IGNORED)
             continue
 
-        resource_path = test_spec["path"].format(owner=owner_name, repo=repo_name)
-        resource_path = "https://api.github.com/" + resource_path
-        logger.debug(f"Querying {resource_path}")
         try:
-            result = requests.get(
-                resource_path,
-                headers={"Authorization": f"Bearer {github_token}"},
-            )
-            result.raise_for_status()
+            prerequisites = test_spec.get('prerequisites', [])
+            for p in prerequisites:
+                result = get_json(p, project_settings)
+                s = p.get('substitute')
+                if s:
+                    substitution_key = s['key']
+                    substitution_value = result[s['value']]
+                    test_spec = substitute(test_spec, {substitution_key: substitution_value})
+
+            result = get_json(test_spec, project_settings)
             mismatches = {}
             if "json" in test_spec:
-                mismatches = compare_values(result.json(), test_spec["json"])
+                mismatches = compare_values(result, test_spec["json"])
             elif "array" in test_spec:
                 mismatches = compare_array(
-                    result.json(), test_spec["array"], key=test_spec.get("key")
+                    result, test_spec["array"], key=test_spec.get("key")
                 )
 
             output.add_results(
@@ -283,7 +314,7 @@ if __name__ == "__main__":
                 mismatches=mismatches,
             )
 
-        except requests.exceptions.HTTPError:
+        except (requests.exceptions.HTTPError, MatchError):
             output.add_results(test_name, test_spec, ResultType.ERROR)
 
     output.print()
